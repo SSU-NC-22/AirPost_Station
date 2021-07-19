@@ -1,0 +1,3 @@
+[submodule "requirements/py-spidev"]
+	path = requirements/py-spidev
+	url = https://github.com/doceme/py-spidev.git
