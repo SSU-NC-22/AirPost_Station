@@ -3,7 +3,7 @@ from apriltag import apriltag
 
 
 class TagSensor():
-	def __init__(self, device, tagfamilly="tag36h11"):
+	def __init__(self, device=0, tagfamilly="tag36h11"):
 		self.tagFamily = tagfamilly
 		self.cap = cv2.VideoCapture(device)  # 0, -1, /dev/video0 ...
 		self.detectedTags = []
