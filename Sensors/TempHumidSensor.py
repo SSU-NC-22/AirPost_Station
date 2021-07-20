@@ -1,19 +1,26 @@
 import adafruit_dht
 from board import *
-import time
 
-# GPIO18
-SENSOR_PIN = D18
 
-dht11 = adafruit_dht.DHT11(SENSOR_PIN, use_pulseio=False)
+class TempHumidSensor():
+	def __init__(self, gpio="D18"):
+		self.gpio = gpio
+		self.dht11 = adafruit_dht.DHT11(gpio, use_pulseio=False)
+		self.temperature = 0
+		self.humidity = 0
 
-while True:
-    time.sleep(1)
-    try:
-        temperature = dht11.temperature
-        humidity = dht11.humidity
-    except:
-        continue
-        
-    print(f"Humidity= {humidity:.2f}")
-    print(f"Temperature= {temperature:.2f}°C")
+	def ReadTemperature(self):
+		try:
+			self.temperature = self.dht11.temperature
+			return self.temperature
+
+		except:
+			return -1
+
+	def ReadHumidity(self):
+		try:
+			self.humidity = self.dht11.humidity
+			return self.humidity
+
+		except:
+			return -1
