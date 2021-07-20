@@ -9,18 +9,10 @@ class TempHumidSensor():
 		self.temperature = 0
 		self.humidity = 0
 
-	def ReadTemperature(self):
+	def Read(self):
 		try:
 			self.temperature = self.dht11.temperature
-			return self.temperature
-
-		except:
-			return -1
-
-	def ReadHumidity(self):
-		try:
 			self.humidity = self.dht11.humidity
-			return self.humidity
-
+			return [self.temperature, self.humidity]
 		except:
 			return -1
