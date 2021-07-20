@@ -12,7 +12,7 @@ from Sensors.TempHumidSensor import TempHumidSensor
 
 class Publisher:
 	def __init__(self):
-		self.broker = '192.168.1.5'
+		self.broker = '192.168.1.6'
 		self.port = 1883
 		self.topic = "/data/station"
 		self.client_id = 'sta00001'
@@ -53,23 +53,30 @@ if __name__ == '__main__':
 	temp_humid = TempHumidSensor()
 
 	while True:
-		time.sleep(1)
+		temp_humid.ReadTemperature()
+		temp_humid.ReadHumidity()
+		gps.Read()
+		light.Read()
+		tag.Read()
+
 		msgs = [{
 			"sensor_id": 0,
 			"node_id": publisher.client_id,
 			"values": {
-				"temp": temp_humid.ReadTemperature(),
-				"light": light.Read()[0],
-				"humid": temp_humid.ReadHumidity(),
+				"temp": temp_humid.temperature,
+				"light": light.data,
+				"humid": temp_humid.humidity,
 
-				"lat": gps.Read()['lat'],
-				"lon": gps.Read()['lon'],
-				"alt": gps.Read()['alt'],
+				"lat": gps.data['lat'],
+				"lon": gps.data['lon'],
+				"alt": gps.data['alt'],
 
-				"clear": tag.Read()[0],
+				"clear": len(tag.detectedTags),
 				"status": 0,
 			},
 			"timestamp": str(datetime.datetime.now())
 		}]
+
+		print(msgs)
 
 		publisher.publish(msgs)

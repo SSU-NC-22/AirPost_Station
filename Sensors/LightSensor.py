@@ -20,6 +20,6 @@ class LightSensor():
 		self.volt = round(self.volt, 2)
 
 	def Read(self):
-		self.readChannel()
+		self.ReadChannel()
 		self.ConvertVolt()
 		return [self.data, self.volt]

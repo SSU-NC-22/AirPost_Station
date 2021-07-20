@@ -3,7 +3,7 @@ from board import *
 
 
 class TempHumidSensor():
-	def __init__(self, gpio="D18"):
+	def __init__(self, gpio=D18):
 		self.gpio = gpio
 		self.dht11 = adafruit_dht.DHT11(gpio, use_pulseio=False)
 		self.temperature = 0

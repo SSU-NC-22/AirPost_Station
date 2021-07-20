@@ -1,9 +1,9 @@
 from paho.mqtt import client as mqtt_client
 
-broker = '192.168.1.5'
+broker = '192.168.1.6'
 port = 1883
 topic = "/data/station"
-client_id = 'S0000001'
+client_id = 'sta00000'
 
 
 def connect_mqtt() -> mqtt_client:
