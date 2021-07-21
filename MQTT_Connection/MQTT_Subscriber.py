@@ -24,6 +24,7 @@ class MQTTSubscriber():
 	def subscribe(self):
 		def on_message(client, userdata, msg):
 			print(f"Received msg from `{msg.topic}` topic")
+            result = json.loads(json_data)
 			m_decode = str(msg.payload.decode("utf-8", "ignore"))
 			print(m_decode)
 
