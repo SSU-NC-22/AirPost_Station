@@ -90,14 +90,19 @@ AirPost_Station is a IOT platform based landing space for drone.
   + Preparing
 
     1. install packages for GPS module.
+       
        `sudo apt-get update && sudo apt-get -y install gpsd gpsd-clients python-gps`
-
+       
        `pip3 install gps`
-
+       
     2. Start the gpsd service and control it.
+
        Enable it: `sudo systemctl enable gpsd.socket`
+
        Start it: `sudo systemctl start gpsd.socket`
+
        Restart it: `sudo systemctl restart gpsd.socket`
+
        Check status: `sudo systemctl status gpsd.socket`
 
     3. Modify the configuration file of gpsd in /etc/default/gpsd
@@ -109,6 +114,7 @@ AirPost_Station is a IOT platform based landing space for drone.
 
     4. Restart service:
        `sudo systemctl restart gpsd.socket`
+
        Finally, use this command to get information from GPS module.
        `sudo cgps -s`
 
