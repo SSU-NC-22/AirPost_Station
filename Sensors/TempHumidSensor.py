@@ -13,6 +13,10 @@ class TempHumidSensor():
 		try:
 			self.temperature = self.dht11.temperature
 			self.humidity = self.dht11.humidity
+
 			return [self.temperature, self.humidity]
 		except:
-			return -1
+			self.temperature = None
+			self.humidity = None
+
+			return [self.temperature, self.humidity]

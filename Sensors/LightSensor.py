@@ -22,4 +22,10 @@ class LightSensor():
 	def Read(self):
 		self.ReadChannel()
 		self.ConvertVolt()
+
+		if self.data == 0:
+			self.data = None
+		if self.volt == 0:
+			self.volt = None
+			
 		return [self.data, self.volt]
