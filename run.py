@@ -4,7 +4,7 @@ from Sensors.GPSSensor import GPSSensor
 from Sensors.LightSensor import LightSensor
 from Sensors.TagSensor import TagSensor
 from Sensors.TempHumidSensor import TempHumidSensor
-import datetime
+from datetime import datetime
 import time
 import json
 
@@ -52,7 +52,7 @@ while True:
 			"clear": clear,
 			"status": 0,
 		},
-		"timestamp": str(datetime.datetime.now())
+		"timestamp": datetime.now().strftime('%Y-%m-%d %H:%M:%S')
 	}
 	
 	msg = json.dumps(msgs)
