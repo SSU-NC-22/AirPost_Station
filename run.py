@@ -10,7 +10,7 @@ import json
 
 broker = '58.230.119.87'
 port = 9708
-client_id = '0'
+client_id = 'STA0'
 
 
 gps = GPSSensor()
@@ -22,8 +22,7 @@ temp_humid = TempHumidSensor()
 handler = Handler()
 mqtt = MQTT(broker, port, client_id)
 mqtt.connect_mqtt()
-mqtt.subscribe("data/0", handler)
-#mqtt.subscribe("command/downlink/ActuatorReq/0", handler)
+mqtt.subscribe("command/downlink/ActuatorReq/" + client_id, handler)
 
 
 while True:
