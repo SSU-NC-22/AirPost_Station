@@ -39,15 +39,19 @@ class MQTT():
             print(f"Failed to send message to topic {self.pub_topic}")
 
     def subscribe(self, topic, handler):
-        self.sub_topic = topic
         self.handler = handler
 
         def on_message(client, userdata, msg):  # return msg.payload
             print(f"Received msg from `{msg.topic}` topic")
             self.handler.run(msg.payload)
 
-        self.client.on_message = on_message
-        self.client.subscribe(self.sub_topic)
+        self.client.message_callback_add(topic, on_message)
+        self.client.subscribe(topic)
+
+    def DevStatusReqCallBack(self, client, userdata, msg):
+        msgs = { "battery": 100 }
+        msg = json.dumps(msgs)
+        mqtt.publish("command/uplink/"+client_id, msg)
 
 
 if __name__ == "__main__":
@@ -63,7 +67,9 @@ if __name__ == "__main__":
     handler = Handler()
     mqtt = MQTT(broker, port, client_id)
     mqtt.connect_mqtt()
-    mqtt.subscribe("command/downlink/ActuatorReq/"+client_id)
+    mqtt.client.message_callback_add("command/downlink/DevStatusReq/"+client_id, mqtt.DevStatusReqCallBack)
+    mqtt.client.subscribe("command/downlink/DevStatusReq/")
+    mqtt.subscribe("command/downlink/ActuatorReq/"+client_id, handler)
 
     while True:
         # sensor value exception handler
