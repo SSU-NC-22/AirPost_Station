@@ -1,15 +1,14 @@
 import json
+from LEDActuator import LED
+
 
 class Handler():
-	def __init__(self):
-		print("handler init")
+    def __init__(self):
+        self.led = LED()
 
-	def run(self, msg):
-		print("handler run")
-		try: 
-			sub_str = str(msg.decode("utf-8", "ignore")) #string data
-			print("subscribe: ", type(sub_str), sub_str)
-			sub_dict = json.loads(sub_str) # dict data
-			print(sub_dict)
-		except:
-				print("handler error")
+    def run(self, msg):
+        msg = json.loads(msg.decode())
+        if msg['value'] == 1:
+            self.led.On()
+        if msg['value'] == 0:
+            self.led.Off()
