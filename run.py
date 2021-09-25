@@ -5,15 +5,17 @@ from Sensors.LightSensor import LightSensor
 from Sensors.TagSensor import TagSensor
 from Sensors.TempHumidSensor import TempHumidSensor
 from datetime import datetime
+import RPi.GPIO as GPIO
 import time
 import json
 
 
 class MQTT():
-    def __init__(self, broker, port, client_id):
+    def __init__(self, broker, port, client_id, handler):
         self.broker = broker
         self.port = port
         self.client_id = client_id
+        self.handler = handler
         self.client = mqtt_client.Client(self.client_id)
 
     def connect_mqtt(self):
@@ -38,15 +40,9 @@ class MQTT():
         else:
             print(f"Failed to send message to topic {self.pub_topic}")
 
-    def subscribe(self, topic, handler):
-        self.handler = handler
-
-        def on_message(client, userdata, msg):  # return msg.payload
-            print(f"Received msg from `{msg.topic}` topic")
-            self.handler.run(msg.payload)
-
-        self.client.message_callback_add(topic, on_message)
-        self.client.subscribe(topic)
+    def ActuatorReqCallBack(self, client, userdata, msg):
+        print(f"Received msg from `{msg.topic}` topic")
+        self.handler.run(msg.payload)
 
     def DevStatusReqCallBack(self, client, userdata, msg):
         msgs = { "battery": 100 }
@@ -59,17 +55,20 @@ if __name__ == "__main__":
     port = 9708
     client_id = 'STA0'
 
+    GPIO.cleanup()
+
     gps = GPSSensor()
     tag = TagSensor()
     light = LightSensor()
     temp_humid = TempHumidSensor()
 
     handler = Handler()
-    mqtt = MQTT(broker, port, client_id)
-    mqtt.connect_mqtt()
+    mqtt = MQTT(broker, port, client_id, handler)
+    mqtt.client.message_callback_add("command/downlink/ActuatorReq/"+client_id, mqtt.ActuatorReqCallBack)
     mqtt.client.message_callback_add("command/downlink/DevStatusReq/"+client_id, mqtt.DevStatusReqCallBack)
+    mqtt.connect_mqtt()
+    mqtt.client.subscribe("command/downlink/ActuatorReq/")
     mqtt.client.subscribe("command/downlink/DevStatusReq/")
-    mqtt.subscribe("command/downlink/ActuatorReq/"+client_id, handler)
 
     while True:
         # sensor value exception handler
