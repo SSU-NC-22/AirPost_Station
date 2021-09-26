@@ -45,9 +45,12 @@ class MQTT():
         self.handler.run(msg.payload)
 
     def DevStatusReqCallBack(self, client, userdata, msg):
-        msgs = { "battery": 100 }
+        msgs = {"lat": gps.data['lat'],
+                "long": gps.data['lon'],
+                "alt" gps.data['alt'],
+                "battery": 100 }
         msg = json.dumps(msgs)
-        mqtt.publish("command/uplink/"+client_id, msg)
+        mqtt.publish("command/uplink/DevStatusAns"+client_id, msg)
 
 
 if __name__ == "__main__":
@@ -67,8 +70,8 @@ if __name__ == "__main__":
     mqtt.client.message_callback_add("command/downlink/ActuatorReq/"+client_id, mqtt.ActuatorReqCallBack)
     mqtt.client.message_callback_add("command/downlink/DevStatusReq/"+client_id, mqtt.DevStatusReqCallBack)
     mqtt.connect_mqtt()
-    mqtt.client.subscribe("command/downlink/ActuatorReq/")
-    mqtt.client.subscribe("command/downlink/DevStatusReq/")
+    mqtt.client.subscribe("command/downlink/ActuatorReq/"+client_id)
+    mqtt.client.subscribe("command/downlink/DevStatusReq/"+client_id)
 
     while True:
         # sensor value exception handler
