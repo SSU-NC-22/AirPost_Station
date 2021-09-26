@@ -47,7 +47,7 @@ class MQTT():
     def DevStatusReqCallBack(self, client, userdata, msg):
         msgs = {"lat": gps.data['lat'],
                 "long": gps.data['lon'],
-                "alt" gps.data['alt'],
+                "alt" : gps.data['alt'],
                 "battery": 100 }
         msg = json.dumps(msgs)
         mqtt.publish("command/uplink/DevStatusAns"+client_id, msg)
