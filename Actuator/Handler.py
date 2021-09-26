@@ -8,6 +8,7 @@ class Handler():
 
     def run(self, msg):
         msg = json.loads(msg.decode())
+        msg = msg['values'][0]
         if msg['value'] == 1:
             self.led.On()
         if msg['value'] == 0:
