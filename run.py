@@ -50,13 +50,13 @@ class MQTT():
                 "alt" : gps.data['alt'],
                 "battery": 100 }
         msg = json.dumps(msgs)
-        mqtt.publish("command/uplink/DevStatusAns"+client_id, msg)
+        mqtt.publish("command/uplink/DevStatusAns/"+client_id, msg)
 
 
 if __name__ == "__main__":
     broker = '58.230.119.87'
     port = 9708
-    client_id = 'STA0'
+    client_id = 'STA1'
 
     GPIO.cleanup()
 
