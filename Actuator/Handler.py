@@ -14,7 +14,7 @@ class Handler():
             self.led.Off()
 
 class LED():
-    def __init__(self, gpio=32):
+    def __init__(self, gpio=12):
         self.gpio = gpio
         # Ignore warning for now
         GPIO.setwarnings(False) 
