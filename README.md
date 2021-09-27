@@ -2,8 +2,6 @@
 
 AirPost_Station is a IOT platform based landing space for drone.
 
-[TOC]
-
 ## Companion Computer
 
 + Raspberry Pi
@@ -65,27 +63,9 @@ AirPost_Station is a IOT platform based landing space for drone.
 ## Guide
 
 + Run
-
-  + Publisher
-
-    Gather sensor values and publish to the sink node server.
-
-    `python3 run_pub.py`
-    
-  + Subscriber
-
-    Get message from sink node server.
-
-    `python3 run_sub.py`
+  + type following command ```python3 run.py```
 
 + Packages
-
-  You can manually install all related packages with sensors. But through shell scripts in Requirements folder, it will be easier. Type bash ./install.sh in your terminal.
-
-  ```
-  cd Requirements
-  sudo bash ./install.sh
-  ```
 
 + GPS
 
@@ -119,33 +99,6 @@ AirPost_Station is a IOT platform based landing space for drone.
 
        Finally, use this command to get information from GPS module.
        `sudo cgps -s`
-
-  + Python example
-
-    ```
-    #! /usr/bin/python
-    from gps import *
-    import time
-       
-    gpsd = gps(mode=WATCH_ENABLE|WATCH_NEWSTYLE) 
-    print 'latitude\tlongitude\ttime utc\t\t\taltitude\tepv\tept\tspeed\tclimb' # '\t' = TAB to try and output the data in columns.
-      
-    try:
-        while True:
-            report = gpsd.next() #
-    	    if report['class'] == 'TPV':
-                    print  getattr(report,'lat',0.0),"\t",
-                    print  getattr(report,'lon',0.0),"\t",
-                    print getattr(report,'time',''),"\t",
-                    print  getattr(report,'alt','nan'),"\t\t",
-                    print  getattr(report,'epv','nan'),"\t",
-                    print  getattr(report,'ept','nan'),"\t",
-                    print  getattr(report,'speed','nan'),"\t",
-                    print getattr(report,'climb','nan'),"\t"
-                    time.sleep(1) 
-    except (KeyboardInterrupt, SystemExit):      #when you press ctrl+c
-        print "Done.\nExiting."
-    ```
 
 + Camera
 
@@ -197,26 +150,6 @@ AirPost_Station is a IOT platform based landing space for drone.
       python -m pip install -U scikit-image
       ```
 
-  + Python example
-
-    ```
-    import cv2
-    cap = cv2.VideoCapture(0) #0 or -1
-    while cap.isOpened():
-        ret, img = cap.read()
-        if ret:
-            cv2.imshow('camera', img)
-            if cv2.waitKey(1) & 0xFF == 27: #esc
-                break
-        else:
-            print('no camera!')
-            break
-    cap.release()
-    cv2.destroyAllWindows()
-    ```
-
-+ Light Sensor
-
   + Preparing
 
     + py-spidev
@@ -225,35 +158,7 @@ AirPost_Station is a IOT platform based landing space for drone.
       cd py-spidev/
       sudo python setup.py install
       ```
-
-  + python Example
-
-    ```
-    import spidev
-    import time
-    
-    spi = spidev.SpiDev()
-    spi.open(0,0)
-    spi.max_speed_hz=500000
-     
-    def readChannel(channel):
-      val = spi.xfer2([1,(8+channel)<<4,0])
-      data = ((val[1]&3) << 8) + val[2]
-      return data
-    
-    def ConvertVolt(data, places):
-        volt = (data * 3.3)/float(1023)
-        volt = round(volt, places)
-        return volt
-    
-    if __name__ == "__main__":
-      while(1):
-        light_level = readChannel(0)
-        light_volt = ConvertVolt(light_level, 2)
-        print("Light Data : {} ({}V)".format(light_level, light_volt))
-        time.sleep(0.5)
-    ```
-
+      
 + TempHumid Sensor
 
   + Prepareing
@@ -269,31 +174,6 @@ AirPost_Station is a IOT platform based landing space for drone.
 
       `pip3 install board`
 
-  + python Example
-
-    ```
-    import adafruit_dht
-    from board import *
-    import time
-    
-    # GPIO18
-    SENSOR_PIN = D18
-    
-    dht11 = adafruit_dht.DHT11(SENSOR_PIN, use_pulseio=False)
-    
-    while True:
-        time.sleep(1)
-        try:
-            temperature = dht11.temperature
-            humidity = dht11.humidity
-        except:
-            continue
-            
-        print(f"Humidity= {humidity:.2f}")
-        print(f"Temperature= {temperature:.2f}°C")
-    ```
-
-    
 
 + MQTT client
 
@@ -304,110 +184,6 @@ AirPost_Station is a IOT platform based landing space for drone.
     sudo apt-get install mosquitto-clients
     pip3 install paho-mqtt
     ```
-
-  + Python example
-
-    + Publisher
-
-      ```
-      import random
-      import time
-      import json
-      import datetime
-      
-      from paho.mqtt import client as mqtt_client
-      
-      broker = '192.168.1.5'
-      port = 1883
-      topic = "/data/station"
-      client_id = 'P0000001'
-      
-      msgs = [{
-          "message" : "hello"
-      }]
-      
-      def connect_mqtt():
-          def on_connect(client, userdata, flags, rc):
-              if rc == 0:
-                  print("Connected to MQTT Broker!")
-              else:
-                  print("Failed to connect, return code %d\n", rc)
-      
-          client = mqtt_client.Client(client_id)
-          client.on_connect = on_connect
-          client.connect(broker, port)
-          return client
-      
-      
-      def publish(client):
-          while True:
-              time.sleep(1)
-              msg = json.dumps(msgs)
-              result = client.publish(topic, msg)
-              # result: [0, 1]
-              status = result[0]
-              if status == 0:
-                  print(f"Send msg to topic `{topic}`")
-              else:
-                  print(f"Failed to send message to topic {topic}")
-      
-      
-      def run():
-          client = connect_mqtt()
-          client.loop_start()
-          publish(client)
-      
-      
-      if __name__ == '__main__':
-          run()
-      ```
-
-      
-
-    + Subscriber
-
-      ```
-      from paho.mqtt import client as mqtt_client
-      
-      broker = '192.168.1.5'
-      port = 1883
-      topic = "/data/station"
-      client_id = 'S0000001'
-      
-      
-      def connect_mqtt() -> mqtt_client:
-          def on_connect(client, userdata, flags, rc):
-              if rc == 0:
-                  print("Connected to MQTT Broker!")
-              else:
-                  print("Failed to connect, return code %d\n", rc)
-      
-          client = mqtt_client.Client(client_id)
-          client.on_connect = on_connect
-          client.connect(broker, port)
-          return client
-      
-      
-      def subscribe(client: mqtt_client):
-          def on_message(client, userdata, msg):
-              print(f"Received msg from `{msg.topic}` topic")
-              m_decode=str(msg.payload.decode("utf-8","ignore"))
-              print(m_decode)
-              
-          client.subscribe(topic)
-          client.on_message = on_message
-      
-      
-      def run():
-          client = connect_mqtt()
-          subscribe(client)
-          client.loop_forever()
-      
-      
-      if __name__ == '__main__':
-          run()
-      ```
-
       
 
 ## Reference Link
