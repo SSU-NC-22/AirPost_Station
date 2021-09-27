@@ -1,0 +1,15 @@
+[submodule "Requirements/py-spidev"]
+	path = Requirements/py-spidev
+	url = https://github.com/doceme/py-spidev.git
+[submodule "Requirements/apriltag"]
+	path = Requirements/apriltag
+	url = https://github.com/AprilRobotics/apriltag.git
+[submodule "Requirements/toiot-lora-gateway-driver"]
+	path = Requirements/toiot-lora-gateway-driver
+	url = https://github.com/SSU-NC/toiot-lora-gateway-driver.git
+[submodule "Requirements/toiot-lora-sensor-node-driver"]
+	path = Requirements/toiot-lora-sensor-node-driver
+	url = https://github.com/SSU-NC/toiot-lora-sensor-node-driver.git
+[submodule "Requirements/toiot-sensor-node-driver"]
+	path = Requirements/toiot-sensor-node-driver
+	url = https://github.com/SSU-NC/toiot-sensor-node-driver.git
