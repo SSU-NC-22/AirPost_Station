@@ -1,3 +1,4 @@
+import os
 from paho.mqtt import client as mqtt_client
 from Actuator.Handler import Handler
 from Sensors.GPSSensor import GPSSensor
@@ -54,8 +55,9 @@ class MQTT():
 
 
 if __name__ == "__main__":
-    broker = 'REDACTED_HOST'
-    port = 9708
+    # broker host/port from env (was a hardcoded operator IP — security finding)
+    broker = os.environ.get('MQTT_BROKER_HOST', '127.0.0.1')
+    port = int(os.environ.get('MQTT_BROKER_PORT', '1883'))
     client_id = 'STA1'
 
     GPIO.cleanup()
