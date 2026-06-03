@@ -17,7 +17,12 @@ class MQTT():
         self.port = port
         self.client_id = client_id
         self.handler = handler
-        self.client = mqtt_client.Client(self.client_id)
+        # paho-mqtt 2.x requires an explicit callback API version; the callbacks here use the v1
+        # signatures. Older paho (no CallbackAPIVersion enum) falls back to the 1.x constructor.
+        try:
+            self.client = mqtt_client.Client(mqtt_client.CallbackAPIVersion.VERSION1, self.client_id)
+        except AttributeError:
+            self.client = mqtt_client.Client(self.client_id)
 
     def connect_mqtt(self):
         def on_connect(client, userdata, flags, rc):
@@ -58,7 +63,7 @@ if __name__ == "__main__":
     # broker host/port from env (was a hardcoded operator IP — security finding)
     broker = os.environ.get('MQTT_BROKER_HOST', '127.0.0.1')
     port = int(os.environ.get('MQTT_BROKER_PORT', '1883'))
-    client_id = 'STA1'
+    client_id = os.environ.get('STATION_ID', 'STA1')   # a device sets its own id; defaults to STA1
 
     GPIO.cleanup()
 
