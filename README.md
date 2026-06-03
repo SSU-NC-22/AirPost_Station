@@ -1,6 +1,43 @@
-# AirPost_Station
+# AirPost_Station — the smart landing pad (IoT)
 
-AirPost_Station is a IOT platform based landing space for drone.
+This repository is a **landing station** in the [AirPost](https://github.com/jsoone24/NC_AirPost)
+drone-delivery system: the physical helipad a drone takes off from and lands on, made "smart" by a
+Raspberry Pi and a handful of sensors.
+
+## What it is, in plain terms
+
+A station is a small **always-on IoT device** sitting under a helipad with an AprilTag marker. Its job
+is to make the pad *known, safe, and landable* at any time:
+
+- **Knows where it is** — a GPS module reports the pad's exact coordinates, so the backend can route
+  drones to it (no hardcoded map).
+- **Knows its condition** — temperature, humidity and a light sensor report the pad's environment.
+- **Stays landable at night** — when the light sensor reads "dark", the station turns on a **pad LED
+  (lamp)** so the drone's downward camera can still see the AprilTag and precision-land. This is the
+  station's key trick: vision landing needs light, so the pad provides its own.
+- **Checks clearance** — a Pi camera can verify the landing space is clear.
+
+## Where it sits in AirPost
+
+```
+AirPost_Station (Raspberry Pi)
+  ├─ GPS, temp, humidity, light  ──MQTT──► Sink ──► Kafka ──► backend (map + dashboards)
+  └─ light sensor "dark?" ──► turn ON pad LED ──► drone camera can read the AprilTag at night
+```
+
+The station continuously **publishes its sensors over MQTT**; the [Sink](https://github.com/SSU-NC-22/AirPost_Sink)
+forwards them to Kafka, and the backend stores/charts them and shows the station on the live map. The
+night-lamp rule is driven by the light reading (locally and/or via the backend's logic engine).
+
+> In the [simulation](https://github.com/jsoone24/NC_AirPost/tree/main/simulation), `station_iot.py`
+> plays this exact role: each station self-registers with the backend and streams GPS/temp/humidity/
+> light, raising a virtual pad lamp in the dark — so the simulated world behaves like these real boards.
+
+The rest of this README is the **hardware list and the Raspberry-Pi bring-up** (wiring and installing
+the GPS, camera, DHT11, light sensor, LED, and the MQTT client).
+
+---
+
 
 ## Companion Computer
 
