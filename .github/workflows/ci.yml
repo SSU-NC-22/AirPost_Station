@@ -1,0 +1,36 @@
+name: CI
+
+on:
+  push:
+  pull_request:
+
+jobs:
+  python:
+    name: Python compile + import smoke
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Install dependencies
+        # The only non-hardware runtime dep; the RPi/spidev/camera/GPS modules
+        # are provided by the sim_hw/ shims (no Raspberry Pi needed in CI).
+        run: pip install paho-mqtt
+
+      - name: Byte-compile sources
+        run: python -m compileall run.py run_station_sim.py Sensors Actuator sim_hw
+
+      - name: Import smoke test (via sim_hw shims, no hardware)
+        # sim_hw/ shims RPi.GPIO, spidev, board, gps, adafruit_dht, cv2, apriltag,
+        # so the unchanged station code imports cleanly off real hardware. run.py
+        # only connects to MQTT under __main__, so importing it is side-effect free.
+        env:
+          PYTHONPATH: sim_hw:.
+        run: |
+          python -c "import run, run_station_sim; \
+            from Sensors import GPSSensor, LightSensor, TagSensor, TempHumidSensor; \
+            from Actuator import Handler; \
+            print('imports OK')"
